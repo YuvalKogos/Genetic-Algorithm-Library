@@ -1,10 +1,9 @@
 import random
 import string
 import numpy as np
-import random
 
 GENERATIONS_NUM = 100
-TARGET = 'genetic algorithm'
+TARGET = 'this is a sample sentence'
 
 
 class DNA:
