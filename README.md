@@ -3,5 +3,5 @@
 *Basic implementations of Machine Learning concepts (models and optimization methods) made from scratch with python.
 
 Current Libraries:
-- Neural Network (MLP) library : Basic Neural Network library from scratch (using the MatrixOperation.py file i made for basic Linear Algebra operations).
+- Neural Network (MLP) library : Basic Neural Network library from scratch (using the MatrixOperation.py file i made for basic Linear Algebra operations). The Machine Learning object can be constructed by a specific string format i made.
 - Genetic Algorithm library for optimization and search problems. Tested on a goal of searching a specific word in least amount of time.
