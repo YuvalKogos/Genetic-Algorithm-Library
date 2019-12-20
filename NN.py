@@ -111,7 +111,6 @@ class NeuralNetwork:
         return result
 
     def Mutate(self, rate):
-        rate = 0.3
         # Input - hidden weights
         for i in range(self.hidden_nodes):
             for j in range(self.input_nodes):
