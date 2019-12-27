@@ -1,7 +1,6 @@
 import random
 import math
 from MatrixOperations import *
-import csv
 
 
 def sigmoid(x):
