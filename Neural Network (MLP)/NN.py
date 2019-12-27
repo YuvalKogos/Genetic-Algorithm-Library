@@ -1,16 +1,14 @@
 import random
 import math
-import numpy as np
 from MatrixOperations import *
-import csv
 
 
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    return 1 / (1 + math.exp(-x))
 
 
 def tanH(x):
-    return np.tanh(x)
+    return math.tanh(x)
 
 
 class NeuralNetwork:
