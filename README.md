@@ -1,4 +1,4 @@
-# Machine-Learning_Models_from_Scratch
+# Machine-Learning-Models-from-Scratch
 
 Machine Learning models and optimization methods i iplemented from scratch (without numpy) in goal of learning the math and principles behind traditional ML algorithms.
 
