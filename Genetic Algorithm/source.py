@@ -1,127 +1,177 @@
 import random
 import string
-import numpy as np
-import random
 
-GENERATIONS_NUM = 100
-TARGET = 'genetic algorithm'
+
+PHRASE = "YUVAL"        #UPPERCASE ONLY
+PHRASE_LENGTH = len(list(PHRASE))
+MUTATION_RATE = 0.2
+POPULLATION_SIZE = 150
+MAX_GENERATIONS = 100000
 
 
 class DNA:
-    def __init__(self,length):
-        self.genes = np.chararray(length)
-        self.length = length
-        for char in self.genes:
-            char = random.choice(string.ascii_letters)
+    def __init__(self, last_gen = None):
+        if last_gen == None:
+            self.genes = []
+            for i in range(PHRASE_LENGTH):
+                self.genes.append(''.join(random.choice(string.ascii_uppercase)))
+        else:
+            self.genes = last_gen
 
 
-    def calculate_fitness(self,target):
-        counter = 0
-        for i in range(self.length):
-            if self.genes[i] == target[i]:
-                counter += 1
 
-        return counter
+    def calculate_fitness(self):
+        fitness = 0
+        goal = list(PHRASE)
+        for i in range(PHRASE_LENGTH):
+            if self.genes[i] == goal[i]:
+                fitness += 5
+            elif self.genes[i] in PHRASE:
+                fitness+=1
+            # else:
+            #     for k in range(i,PHRASE_LENGTH):
+            #         if self.genes[i] == goal[k]:
+            #             fitness += 1
+        return fitness
 
+
+    def crossover(self,other):
+        # ret = []
+        # for i in range(PHRASE_LENGTH):
+        #     prob = random.uniform(0,1)
+        #     if prob < 0.5:
+        #         ret.append(self.genes[i])
+        #     else:
+        #         ret.append(other.genes[i])
+
+        ret = []
+        THD = random.randint(0,PHRASE_LENGTH)
+        for i in range(PHRASE_LENGTH):
+            if i < THD:
+                ret.append(self.genes[i])
+            else:
+                ret.append(other.genes[i])
+
+        return DNA(last_gen=ret)
+
+
+    def mutate(self):
+        ret = []
+        for i in range(PHRASE_LENGTH):
+            prob = random.uniform(0,1)
+            if prob < MUTATION_RATE:
+                ret.append(''.join(random.choice(string.ascii_uppercase)))
+            else:
+                ret.append(self.genes[i])
+
+        return DNA(last_gen=ret)
 
 
 
 class Population:
-    def __init__(self,length,target,mutation_rate):
-        self.target = target
-        self.population = self.init_pop(length)
-        self.mutation_rate = mutation_rate
+    def __init__(self):
+        self.childs = []
 
 
-    def generate(self):
-        fitness_arr = self.create_fitness_arr()
-        a = random(len(fitness_arr))
-        b = random(len(fitness_arr))
-        partner_a = fitness_arr[a]
-        partner_b = fitness_arr[b]
+        for i in range(POPULLATION_SIZE):
+            self.childs.append(DNA())
 
-        for i in range(len(self.population)):
-            child = self.crossover(partner_a, partner_b)
-            self.mutate(child)
-            self.population[i] = child
+        self.best_child = self.childs[0]
 
-    def mutate(self,child):
-        for i in child.length:
-            rand = random.uniform(0,1)
-            if rand <= self.mutation_rate:
-                child.genes[i] = random.choice(string.ascii_letters)
+    def CrateMatingPool(self):
 
-    def crossover(self,partner_a,partner_b):
-        mid_point = partner_a.length / 2
-        child = DNA(partner_a.length)
-        for i in range(partner_a.length):
-            if i < mid_point:
-                child.genes[i] = partner_a.genes[i]
-            else:
-                child.genes[i] = partner_b.genes[i]
+        mating_pool = []
 
-        return child
+        for child_indx in range(len(self.childs)):
+            if self.childs[child_indx].calculate_fitness() > self.best_child.calculate_fitness():
+                self.best_child = self.childs[child_indx]
 
-    def create_fitness_arr(self):
-        total_counter = 0
-        for dna in self.population:
-            total_counter += dna.calculate_fitness(self.target)
+            for i in range(self.childs[child_indx].calculate_fitness()):
+                mating_pool.append(child_indx)
 
-        fitness_arr = []
-        for i in range(len(self.population)):
-            fitness_arr.append((self.population[i].calculate_fitness(self.target) / total_counter) * 100)
+        return mating_pool
 
 
-        results = []
-        for i in range(len(fitness_arr)):
-            for time in range(fitness_arr[i] / 10):
-                results.append(i)
+
+        return mating_pool
 
 
-        return results
+    def calculate_probabilities(self,mating_pool):
+        total_fitness = 0
+        for child in self.childs:
+            total_fitness += child.calculate_fitness()
 
-    def init_pop(self,length):
-        pop = []
-        for i in range(length * 10):
-            tmp = DNA(self.target)
-            pop.append(tmp)
-        return pop
+        prob_arr = []
+        for child in self.childs:
+            prob = (child.calculate_fitness() / total_fitness) * 100
+            prob_arr.append(prob)
 
-    def get_fittest(self):
-        fitness_arr = self.create_fitness_arr()
+        return prob_arr
 
-        longest_streak = 1
-        curr_streak = 1
-        value = fitness_arr[1]
-
-        for i in range(1,len(fitness_arr)):
-            if fitness_arr[i] != fitness_arr[i-1]:
-                if curr_streak > longest_streak:
-                    longest_streak = curr_streak
-                    value = arr[i-1]
-                curr_streak = 0
-
-            elif curr_streak > longest_streak:
-                longest_streak = curr_streak
-                value = fitness_arr[i]
-
-            curr_streak += 1
+    def ChooseTwoParents(self,mating_pool):
+        idx_a = random.choice(mating_pool)
+        idx_b = random.choice(mating_pool)
 
 
-        return value
+
+        parentA = self.childs[idx_a]
+        parentB = self.childs[idx_b]
+
+        return parentA,parentB
+
+
+    def GenerateNewPopulation(self,ParentA,ParentB):
+
+
+        #Create new crossovered population
+        for i in range(POPULLATION_SIZE):
+            self.childs[i] = ParentA.crossover(ParentB)
+
+        #Mutate the population
+        for i in range(POPULLATION_SIZE):
+            self.childs[i] = self.childs[i].mutate()
+
+
+    def GetFittest(self):
+        max_idx = 0
+        max_fit = 0
+
+        for i in range(POPULLATION_SIZE):
+            if self.childs[i].calculate_fitness() > max_fit:
+                max_fit = self.childs[i].calculate_fitness()
+                max_idx = i
+
+
+        return self.childs[max_idx]
+
+
+
+
+
+
+
 
 
 def main():
+    population = Population()
 
-    population = Population(200,TARGET,0.1)
+    for i in range(MAX_GENERATIONS):
+        mating_pool = population.CrateMatingPool()
+
+        if population.best_child.genes == list(PHRASE):
+            print('Succeded !!! Generation : ', i )
+            break
+
+        if i%1000 == 0:
+            print('Generation : ', i)
+            print(population.GetFittest().genes)
+
+        parentA, parentB = population.ChooseTwoParents(mating_pool)
+        population.GenerateNewPopulation(parentA,parentB)
 
 
-    for i in range(GENERATIONS_NUM):
-        population.generate()
-        print(population.get_fittest().genes.tostring)
-
-
-    print("finished!")
+    print('Best child : ',population.best_child.genes)
+    print('Done.')
 
 
 if __name__ == "__main__":
