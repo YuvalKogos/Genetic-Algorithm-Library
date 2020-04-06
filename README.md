@@ -11,6 +11,7 @@ Current models:
  - Sentence searching for the GA library
  - Neuroevolution library (combination of the MLP model and the GA optimization) will be added soon with Flappy Bird game.
  
- *TODO : support multiple hidden layers (currently the MLP model support only 1 input, 1 hidden and 1 output layers)
+ *TODO : support multiple hidden layers (currently the MLP model support only 1 input, 1 hidden and 1 output layers) - DONE!
+ EDIT: The file NeueralNetworkLibrary now supports n hidden layers.
  
  
