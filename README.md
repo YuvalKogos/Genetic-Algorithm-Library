@@ -1,6 +1,6 @@
 # Machine Learning Models from Scratch
 
-Machine Learning models and optimization methods i iplemented from scratch (without numpy) in goal of learning the math and principles behind traditional ML algorithms.
+Machine Learning models and optimization methods iplemented from scratch (even without numpy) in goal of learning the math and principles behind traditional ML algorithms.
 
 Current models:
  - MLP (Neural Network) : Multi Layer Perceptron model from scratch for classification problems.
